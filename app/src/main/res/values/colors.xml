@@ -12,5 +12,5 @@
     <color name="colorGradientEndOrangePressed">#F4824D</color>
     <color name="colorGradientStartPinkPressed">#E874DF</color>
     <color name="colorGradientEndOrange">#BEB1B1</color>
-    <color name="colorFeedbackDisableGray">#E8CBCB</color>
+    <color name="colorFeedbackDisableGray">#F4CFCF</color>
 </resources>
