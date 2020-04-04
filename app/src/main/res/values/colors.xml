@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#009688</color>
+    <color name="colorBackgroundWhite">#00BCD4</color>
+    <color name="colorPersonalTextBlack">#181818</color>
+    <color name="colorGradientStartPink">#E883E6</color>
+    <color name="colorSignInDarkGrey">#848181</color>
+    <color name="colorSignInLightGrey">#D6D0D0</color>
+    <color name="colorTabSelectedPink">#E89BEE</color>
+    <color name="colorGradientEndOrangePressed">#F4824D</color>
+    <color name="colorGradientStartPinkPressed">#E874DF</color>
+    <color name="colorGradientEndOrange">#BEB1B1</color>
+    <color name="colorFeedbackDisableGray">#E8CBCB</color>
+</resources>
