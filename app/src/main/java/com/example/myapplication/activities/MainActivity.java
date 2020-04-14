@@ -4,15 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapters.TabFragmentAdapter;
-import com.example.myapplication.fragments.Fragment1;
-import com.example.myapplication.fragments.Fragment2;
-import com.example.myapplication.fragments.Fragment3;
+import com.example.myapplication.fragments.AnnouncementFragment;
+import com.example.myapplication.fragments.MessageFragment;
+import com.example.myapplication.fragments.ScoreFragment;
+import com.example.myapplication.fragments.MeFragment;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -25,9 +25,10 @@ public class MainActivity extends AppCompatActivity {
     private TabFragmentAdapter mFragmentAdapter;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
-    private Fragment1 mFragment1;
-    private Fragment2 mFragment2;
-    private Fragment3 mFragment3;
+    private AnnouncementFragment mAnnouncementFragment;
+    private MessageFragment mMessageFragment;
+    private ScoreFragment mScoreFragment;
+    private MeFragment mMeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,23 +39,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpTabLayout() {
         int[] iconResID = {
-                R.drawable.icon_tab_homepage,
-                R.drawable.icon_tab_works,
-                R.drawable.icon_tab_personal,
+                R.drawable.icon_tab_announce,
+                R.drawable.icon_tab_message,
+                R.drawable.icon_tab_score,
+                R.drawable.icon_tab_mine,
         };
         String[] iconText = {
-                getString(R.string.homepage),
-                getString(R.string.work),
+                getString(R.string.announce),
+                getString(R.string.message),
+                getString(R.string.score),
                 getString(R.string.mine),
         };
-        mFragment1 = new Fragment1();
-        mFragment2 = new Fragment2();
-        mFragment3 = new Fragment3();
+        mAnnouncementFragment = new AnnouncementFragment();
+        mMessageFragment = new MessageFragment();
+        mScoreFragment = new ScoreFragment();
+        mMeFragment = new MeFragment();
 
         mFragmentList = new ArrayList<Fragment>() {{
-            add(mFragment1);
-            add(mFragment2);
-            add(mFragment3);
+            add(mAnnouncementFragment);
+            add(mMessageFragment);
+            add(mScoreFragment);
+            add(mMeFragment);
         }};
 
         mTabLayout = findViewById(R.id.tablayout_main);

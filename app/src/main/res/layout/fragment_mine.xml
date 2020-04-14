@@ -1,0 +1,84 @@
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/h_back"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@android:color/holo_blue_dark" />
+
+    <ImageView
+        android:id="@+id/h_head"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_above="@+id/name_rl"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="149dp"
+        android:src="@android:color/holo_purple" />
+
+    <RelativeLayout
+        android:id="@+id/name_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/h_back"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/user_line"
+            android:layout_width="1dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_centerHorizontal="true"
+            android:src="@android:color/darker_gray"
+            android:background="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/user_line"
+            android:textSize="17sp"
+            android:textColor="@android:color/white"
+            android:text="张三"/>
+
+        <TextView
+            android:id="@+id/user_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:textSize="17sp"
+            android:textColor="@android:color/white"
+            android:layout_toRightOf="@id/user_line"
+            android:text="182****5882"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name_rl"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@android:color/holo_purple"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="修改密码"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@android:color/holo_purple"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="退出登录"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+    </LinearLayout>
+
+</RelativeLayout>
