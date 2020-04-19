@@ -47,14 +47,12 @@ public class StudentScoreBean implements Parcelable {
         /**
          * average_credit : 2.51
          * average_score : 76.34
-         * class_number : 1601
+
          * course : TCP/IP协议分析与应用编程
          * course_score : 100.0
-         * credit : 40.10
-         * name : lyf
-         * stu_accout : 16407302
-         * stu_class : 网络工程
-         * stu_system : 计算机系
+
+
+
          * total_score : 382.0
          */
 

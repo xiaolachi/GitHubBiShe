@@ -41,7 +41,7 @@ public class LoginActivity extends Activity {
     private EditText mUserNameEt;
     private EditText mPassWordEt;
 
-    private String mSelectType = "学生";
+    private String mSelectType = LibConfig.LOGIN_TYPE_STUDENT;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,6 +89,7 @@ public class LoginActivity extends Activity {
                             UIutils.instance().toast("登录成功");
                             //将 utype  存起来， 后面各个界面  通过他去控制  退出时要清除
                             SPUtils.getInstance().put(LibConfig.LOGIN_U_TYPE, mSelectType);
+                            SPUtils.getInstance().put(LibConfig.LOGIN_U_DATA,  jsonObject.opt("data").toString());
                             finish();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
@@ -109,18 +110,12 @@ public class LoginActivity extends Activity {
         });
     }
 
-    /**
-     * Spinner自定义样式
-     * 1、Spinner内的TextView样式：item_select
-     * 2、Spinner下拉中每个item的TextView样式：item_drop
-     * 3、Spinner下拉框样式，属性设置
-     */
     public void changeSpinner() {
         mSpinner.setDropDownWidth(600); //下拉宽度
         mSpinner.setDropDownHorizontalOffset(100); //下拉的横向偏移
         //mSpinner.setDropDownVerticalOffset(100); //下拉的纵向偏移
 
-        String[] spinnerItems = {"学生", "教师", "教务处"};
+        String[] spinnerItems = {LibConfig.LOGIN_TYPE_STUDENT, LibConfig.LOGIN_TYPE_TEACHER, LibConfig.LOGIN_TYPE_OFFICE};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
                 R.layout.item_select, spinnerItems);
         //自定义下拉的字体样式

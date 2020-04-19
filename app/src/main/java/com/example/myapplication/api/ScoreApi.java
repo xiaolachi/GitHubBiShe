@@ -9,4 +9,7 @@ public interface ScoreApi {
 
     @GET("BiSheServer/main?action=selectscoreallstu")
     Call<ResponseBody> getScoreList(@Query("page") String page, @Query("pagesize") String pagesize);
+
+    @GET("")
+    Call<ResponseBody> addStuScore();
 }

@@ -38,8 +38,8 @@ public class ScoreAdapter extends BaseListAdapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if (mData != null && mData.size() > 0 && holder instanceof ItemViewHolder) {
-           ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-            itemViewHolder.idTv.setText("" + (position+1));
+            ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+            itemViewHolder.idTv.setText("" + (position + 1));
             itemViewHolder.nameTv.setText(mData.get(position).getScorelist().get(position).getName());
             itemViewHolder.systemTv.setText(mData.get(position).getScorelist().get(position).getStu_system());
             itemViewHolder.profressionTv.setText(mData.get(position).getScorelist().get(position).getStu_class());
@@ -60,17 +60,13 @@ public class ScoreAdapter extends BaseListAdapter {
 
     @Override
     public int getItemCount() {
-        if (mData.isEmpty()) {
-            return 1;
-        } else{
-            return mData.size();
-        }
+        return mData.size();
     }
 
     @Override
     public int getItemViewType(int position) {
         if (mData != null && mData.size() > 0 && null == mData.get(position)) {
-           return VIEW_FOOTER;
+            return VIEW_FOOTER;
         } else {
             return super.getItemViewType(position);
         }
@@ -83,6 +79,7 @@ public class ScoreAdapter extends BaseListAdapter {
         private TextView classNumTv;
         private TextView lookDetailTv;
         private TextView idTv;
+
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTv = itemView.findViewById(R.id.name_tv);

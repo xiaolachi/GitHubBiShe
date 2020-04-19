@@ -1,7 +1,10 @@
 package com.example.myapplication.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -45,6 +48,21 @@ public class StudentDetailActivity extends Activity {
         mTv_class_num.setText(bean.getClass_number());
         mTv_stu_card.setText(bean.getStu_card());
         mTv_credit.setText(bean.getStu_score());
+
+        Button btnTrigger = findViewById(R.id.btn_trigger);
+        btnTrigger.setText("编辑");
+        btnTrigger.setVisibility(View.VISIBLE);
+        btnTrigger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //编辑
+                Intent intent = new Intent(StudentDetailActivity.this, StuInfoEditActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("bean", bean);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     private void bindViews() {

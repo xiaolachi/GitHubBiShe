@@ -34,6 +34,16 @@
             android:text="2019.10.11"
             android:textColor="@android:color/white" />
 
+        <Button
+            android:id="@+id/announce_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@android:color/transparent"
+            android:elevation="12dp"
+            android:textColor="@android:color/white"
+            android:text="编辑" />
+
     </RelativeLayout>
 
 

@@ -1,6 +1,7 @@
 package com.example.myapplication.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -10,12 +11,14 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 import com.example.myapplication.R;
+import com.example.myapplication.api.SystemApi;
 import com.example.myapplication.model.StudentScoreBean;
 
 import java.util.ArrayList;
@@ -26,7 +29,7 @@ public class ScoreDetailActivity extends Activity {
     private ImageView mLoading;
     private ArrayList<StudentScoreBean.ScorelistBean> beans;
     private String mYears;
-    private String mUrl = "http://192.168.0.107:8080/BiSheServer/jsp/";
+    private String mUrl = SystemApi.DOMAIN + "BiSheServer/jsp/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,8 +57,6 @@ public class ScoreDetailActivity extends Activity {
     }
 
     public void initListener() {
-
-
         WebSettings settings = mWvContent.getSettings();
         //设置true,才能让Webivew支持<meta>标签的viewport属性
         settings.setUseWideViewPort(true);//设置可以支持缩放

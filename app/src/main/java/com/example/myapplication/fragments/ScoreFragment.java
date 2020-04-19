@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.R;
+import com.example.myapplication.activities.ScoreAddActivity;
 import com.example.myapplication.activities.ScoreDetailActivity;
 import com.example.myapplication.adapters.AnnouncementAdapter;
 import com.example.myapplication.adapters.ScoreAdapter;
@@ -69,6 +71,16 @@ public class ScoreFragment extends BaseListFragment {
         super.initTitle();
         TextView titleTv = mView.findViewById(R.id.toolbar_title);
         titleTv.setText(R.string.score);
+        Button btnTrigger = mView.findViewById(R.id.btn_trigger);
+        btnTrigger.setVisibility(View.VISIBLE);
+        btnTrigger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //添加成绩
+                Intent intent = new Intent(getContext(), ScoreAddActivity.class);
+                startActivity(intent);
+            }
+        });
         mIsCreateView = true;
     }
 
@@ -108,7 +120,9 @@ public class ScoreFragment extends BaseListFragment {
         mSRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mSRefresh.setRefreshing(false);
                 if (!mLoading) {
+                    mSRefresh.setRefreshing(true);
                     refresh();
                     mSRefresh.setRefreshing(false);
                 }
@@ -199,6 +213,6 @@ public class ScoreFragment extends BaseListFragment {
                     }
                 });
             }
-        }, 250);
+        }, 0);
     }
 }

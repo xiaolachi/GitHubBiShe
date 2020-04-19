@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.R;
+import com.example.myapplication.activities.StuInfoEditActivity;
 import com.example.myapplication.activities.StudentDetailActivity;
 import com.example.myapplication.adapters.MessageAdapter;
 import com.example.myapplication.api.SystemApi;
@@ -29,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -48,7 +52,7 @@ public class MessageFragment extends BaseListFragment {
     private View mView;
 
     private MessageAdapter mAdapter = null;
-    private List<StudentInfoBean> mData = new ArrayList();
+    private ArrayList<StudentInfoBean> mData = new ArrayList();
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSRefresh;
 
@@ -64,7 +68,25 @@ public class MessageFragment extends BaseListFragment {
         super.initTitle();
         TextView titleTv = mView.findViewById(R.id.toolbar_title);
         titleTv.setText(R.string.message);
+        Button btnTrigger = mView.findViewById(R.id.btn_trigger);
+        btnTrigger.setVisibility(View.VISIBLE);
+        btnTrigger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //增加
+                Intent intent = new Intent(getContext(), StuInfoEditActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
         mIsCreateView = true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == 2) {
+            refresh();
+        }
     }
 
     private void setUpView() {
@@ -100,10 +122,48 @@ public class MessageFragment extends BaseListFragment {
         mSRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mSRefresh.setRefreshing(false);
                 if (!mLoading) {
+                    mSRefresh.setRefreshing(true);
                     refresh();
                     mSRefresh.setRefreshing(false);
                 }
+            }
+        });
+
+        //长按删除
+        mAdapter.setOnItemLongClickListener(new MessageAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, StudentInfoBean bean) {
+                new SystemApi(getContext()).delStudent(LibConfig.LOGIN_TYPE_STUDENT, bean.getId()).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (null != response.body()) {
+                            try {
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                int code = jsonObject.optInt("code");
+                                String msg = jsonObject.optString("msg");
+                                if (code == LibConfig.SUCCESS_CODE) {
+                                    UIutils.instance().toast("删除成功");
+                                    refresh();
+                                } else {
+                                    UIutils.instance().toast(msg);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.i(TAG + "-----", "onResponse");
+                            }
+                        } else {
+                            UIutils.instance().toast("没有任何数据");
+                        }
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
             }
         });
     }
@@ -166,9 +226,10 @@ public class MessageFragment extends BaseListFragment {
                                 int code = jsonObject.optInt("code");
                                 if (code == LibConfig.SUCCESS_CODE) {
                                     JSONArray data = jsonObject.optJSONArray("data");
-                                    List<StudentInfoBean> beans = new Gson().fromJson(data.toString(), new TypeToken<List<StudentInfoBean>>() {
+                                    ArrayList<StudentInfoBean> beans = new Gson().fromJson(data.toString(), new TypeToken<List<StudentInfoBean>>() {
                                     }.getType());
                                     if (beans != null && beans.size() > 0) {
+                                        Collections.reverse(beans);
                                         mData.addAll(beans);
                                         mCurrentPage++;
                                     }
@@ -190,6 +251,6 @@ public class MessageFragment extends BaseListFragment {
                     }
                 });
             }
-        }, 100);
+        }, 0);
     }
 }

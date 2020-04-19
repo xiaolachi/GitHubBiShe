@@ -16,16 +16,25 @@
         <activity android:name=".activities.LoginActivity"
             android:launchMode="singleTask">
 
-        </activity>
-        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ScoreDetailActivity"/>
-        <activity android:name=".activities.StudentDetailActivity"/>
+        <activity android:name=".activities.MainActivity">
+
+        </activity>
+        <activity android:name=".activities.ScoreDetailActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".activities.StudentDetailActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".activities.StuInfoEditActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".activities.StuSubmitActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".activities.ScoreAddActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

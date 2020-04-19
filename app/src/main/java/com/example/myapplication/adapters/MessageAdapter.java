@@ -18,6 +18,7 @@ public class MessageAdapter extends BaseListAdapter {
 
     private List<StudentInfoBean> mData;
     private OnItemClickListener mListener;
+    private OnItemLongClickListener mLongListener;
 
     public MessageAdapter(List<StudentInfoBean> data, OnItemClickListener listener) {
         this.mData = data;
@@ -26,6 +27,14 @@ public class MessageAdapter extends BaseListAdapter {
 
     public interface OnItemClickListener {
         void onItemClick(View view, StudentInfoBean bean);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(View view, StudentInfoBean bean);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        this.mLongListener = listener;
     }
 
     @Override
@@ -52,6 +61,16 @@ public class MessageAdapter extends BaseListAdapter {
                    }
                }
            });
+
+            itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (mLongListener != null) {
+                        mLongListener.onItemLongClick(view, mData.get(position));
+                    }
+                    return true;
+                }
+            });
         } else if (holder instanceof FooterViewHolder) {
             loadingAnimation((FooterViewHolder) holder);
         }
@@ -82,8 +101,10 @@ public class MessageAdapter extends BaseListAdapter {
         private TextView classNumTv;
         private TextView lookDetailTv;
         private TextView idTv;
+        private View itemView;
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
+            this.itemView = itemView;
             nameTv = itemView.findViewById(R.id.name_tv);
             systemTv = itemView.findViewById(R.id.system_tv);
             profressionTv = itemView.findViewById(R.id.class_tv);

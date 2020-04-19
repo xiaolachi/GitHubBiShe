@@ -1,35 +1,44 @@
 package com.example.myapplication.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.myapplication.R;
-import com.example.myapplication.activities.MainActivity;
 import com.example.myapplication.activities.ScoreDetailActivity;
 import com.example.myapplication.adapters.AnnouncementAdapter;
 import com.example.myapplication.api.SystemApi;
-import com.example.myapplication.base.BaseListAdapter;
 import com.example.myapplication.base.BaseListFragment;
 import com.example.myapplication.constant.LibConfig;
+import com.example.myapplication.dialog.CommonDialog;
+import com.example.myapplication.event.RefreshEvent;
 import com.example.myapplication.model.AnnounceBean;
-import com.example.myapplication.model.StudentInfoBean;
+import com.example.myapplication.utils.LoginUtils;
 import com.example.myapplication.utils.UIutils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -57,6 +66,11 @@ public class AnnouncementFragment extends BaseListFragment {
     protected Boolean mLoading = false;
     protected Boolean mFirstLoading = true;
 
+    private CommonDialog mCommonDialog;
+    private Spinner mSpinner;
+    private String mSelectType;
+    private List<String> mSelects = new ArrayList<>();
+
     @Override
     protected View getLayoutView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_announcement, container, false);
@@ -65,11 +79,173 @@ public class AnnouncementFragment extends BaseListFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void  onEvent(RefreshEvent event) {
+        if (getUserVisibleHint()) {
+            refresh();
+        }
+    }
+
+    @Override
     public void initTitle() {
         super.initTitle();
+        getAnnonYears();
         TextView titleTv = mView.findViewById(R.id.toolbar_title);
         titleTv.setText(R.string.announce);
+        Button btnTrigger = mView.findViewById(R.id.btn_trigger);
+        if (LibConfig.LOGIN_TYPE_OFFICE.equals(LoginUtils.getLoginType())) {
+            btnTrigger.setVisibility(View.VISIBLE);
+        }
+        btnTrigger.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View view) {
+                //增加
+                commonDialog("添加公告", "add", null);
+            }
+        });
         mIsCreateView = true;
+    }
+
+    private void commonDialog(String title, String type, AnnounceBean bean) {
+        mCommonDialog = new CommonDialog.Builder(getContext())
+                .setTitle(title)
+                .setContentView((ViewGroup) View.inflate(getContext(), R.layout.dialog_content_announce_add, null))
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if ("add".equals(type)) {
+                            addAnnounce();
+                        } else if ("edit".equals(type)) {
+                            editAnnounce();
+                        }
+                        dialogInterface.dismiss();
+                    }
+                })
+                .create();
+        mCommonDialog.show();
+        changeSpinner();
+        if (bean != null) {
+            EditText contentET = mCommonDialog.findViewById(R.id.dialog_edit_content);
+            contentET.setText(bean.getContent());
+            mSpinner.setSelection(mSelects.indexOf(bean.getYears()));
+        }
+        CommonDialog.setDialogWindowAttr(mCommonDialog, getContext());
+    }
+
+    private void editAnnounce() {
+    }
+
+    public void changeSpinner() {
+        mSpinner = mCommonDialog.findViewById(R.id.spinner);
+        mSpinner.setDropDownWidth(600); //下拉宽度
+        mSpinner.setDropDownHorizontalOffset(100); //下拉的横向偏移
+        //mSpinner.setDropDownVerticalOffset(100); //下拉的纵向偏移
+
+        //要去获取
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(),
+                R.layout.item_select, mSelects);
+        //自定义下拉的字体样式
+        spinnerAdapter.setDropDownViewResource(R.layout.item_drop);
+        mSpinner.setAdapter(spinnerAdapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mSelectType = ((TextView) view).getText().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void getAnnonYears() {
+        new SystemApi(getContext()).getAnnonYears().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                            JSONArray data = jsonObject.optJSONArray("data");
+                            List<String> beans = new Gson().fromJson(data.toString(), new TypeToken<List<String>>() {
+                            }.getType());
+                            mSelects.addAll(beans);
+                            Log.i("llllyllly", mSelects.get(0));
+                            Log.i("llllyllly", beans.get(0));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i(TAG + "-----", "onResponse");
+                    }
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void addAnnounce() {
+        EditText contentET = mCommonDialog.findViewById(R.id.dialog_edit_content);
+        new SystemApi(getContext()).addAnnounce(contentET.getText().toString(), mSelectType).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        String msg = jsonObject.optString("msg");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                           UIutils.instance().toast("添加成功");
+                           refresh();
+                        }else {
+                            UIutils.instance().toast(msg);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i(TAG + "-----", "onResponse");
+                    }
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+
     }
 
     private void setUpView() {
@@ -79,10 +255,15 @@ public class AnnouncementFragment extends BaseListFragment {
         mAdapter = new AnnouncementAdapter(mData, new AnnouncementAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, AnnounceBean bean) {
-                //点击进入公告详情页
-                Intent intent = new Intent(getContext(), ScoreDetailActivity.class);
-                intent.putExtra("years", bean.getYears());
-                startActivity(intent);
+                if (view.getId() == R.id.announce_btn) {
+                    //点击编辑公告
+                    commonDialog("修改公告", "edit", bean);
+                } else {
+                    //点击进入公告详情页
+                    Intent intent = new Intent(getContext(), ScoreDetailActivity.class);
+                    intent.putExtra("years", bean.getYears());
+                    startActivity(intent);
+                }
             }
         });
         mRecyclerView.setAdapter(mAdapter);
@@ -104,8 +285,11 @@ public class AnnouncementFragment extends BaseListFragment {
         mSRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                mSRefresh.setRefreshing(false);
                 if (!mLoading) {
+                    mSRefresh.setRefreshing(true);
                     refresh();
+                    mSRefresh.setRefreshing(false);
                 }
             }
         });
@@ -114,7 +298,10 @@ public class AnnouncementFragment extends BaseListFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getAnnouncementList();
+        if (mIsCreateView && getUserVisibleHint() && mFirstLoading) {
+            refresh();
+            mFirstLoading = false;
+        }
     }
 
     private void refresh() {
@@ -122,7 +309,6 @@ public class AnnouncementFragment extends BaseListFragment {
         mData.clear();
         mAdapter.notifyDataSetChanged();
         getAnnouncementList();
-        mSRefresh.setRefreshing(false);
     }
 
     private void addLoading() {
@@ -172,7 +358,7 @@ public class AnnouncementFragment extends BaseListFragment {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Log.i(TAG +"-----", "onResponse");
+                                Log.i(TAG + "-----", "onResponse");
                             }
                         } else {
                             UIutils.instance().toast("没有任何数据");
@@ -182,11 +368,11 @@ public class AnnouncementFragment extends BaseListFragment {
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG +"-----", "onFailure：" + t);
+                        Log.i(TAG + "-----", "onFailure：" + t);
                         removeLoading();
                     }
                 });
             }
-        }, 100);
+        }, 0);
     }
 }

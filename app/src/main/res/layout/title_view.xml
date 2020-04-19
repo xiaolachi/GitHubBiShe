@@ -14,15 +14,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorAccent"
-            android:text="卫含晨" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="卫含晨"
+                android:layout_centerInParent="true"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_trigger"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:elevation="8dp"
+                android:gravity="center"
+                android:text="添加"
+                android:visibility="invisible"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <View
