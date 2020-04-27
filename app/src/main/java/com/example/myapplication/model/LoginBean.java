@@ -1,6 +1,9 @@
 package com.example.myapplication.model;
 
-public class LoginBean {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class LoginBean implements Parcelable {
 
 
     /**
@@ -14,6 +17,25 @@ public class LoginBean {
     private String name;
     private int id;
     private String account;
+
+    protected LoginBean(Parcel in) {
+        password = in.readString();
+        name = in.readString();
+        id = in.readInt();
+        account = in.readString();
+    }
+
+    public static final Creator<LoginBean> CREATOR = new Creator<LoginBean>() {
+        @Override
+        public LoginBean createFromParcel(Parcel in) {
+            return new LoginBean(in);
+        }
+
+        @Override
+        public LoginBean[] newArray(int size) {
+            return new LoginBean[size];
+        }
+    };
 
     public String getPassword() {
         return password;
@@ -45,5 +67,28 @@ public class LoginBean {
 
     public void setAccount(String account) {
         this.account = account;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(password);
+        parcel.writeString(name);
+        parcel.writeInt(id);
+        parcel.writeString(account);
+    }
+
+    @Override
+    public String toString() {
+        return "LoginBean{" +
+                "password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", id=" + id +
+                ", account='" + account + '\'' +
+                '}';
     }
 }

@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SystemApi {
 
-    public final static String DOMAIN = "http://192.168.43.130:8080/";
+    public final static String DOMAIN = "http://192.168.0.105:8080/";
     private Retrofit mRetrofit;
     private OkHttpClient mOkHttpClient;
 
@@ -25,6 +25,7 @@ public class SystemApi {
     private AnnounceApi mAnnounceApi;
     private ScholarApi mScholarApi;
     private ExtralScoreApi mExtralScoreApi;
+    private AwardsListApi mAwardsListApi;
 
     public SystemApi(Context context) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
@@ -42,8 +43,10 @@ public class SystemApi {
         mLoginApi = mRetrofit.create(LoginApi.class);
         mMessageApi = mRetrofit.create(MessageApi.class);
         mScoreApi = mRetrofit.create(ScoreApi.class);
+        mScholarApi = mRetrofit.create(ScholarApi.class);
         mAnnounceApi = mRetrofit.create(AnnounceApi.class);
         mExtralScoreApi = mRetrofit.create(ExtralScoreApi.class);
+        mAwardsListApi = mRetrofit.create(AwardsListApi.class);
     }
 
     public Call<ResponseBody> login(RequestBody body) {
@@ -74,8 +77,8 @@ public class SystemApi {
         return mAnnounceApi.addAnnounce(content, years);
     }
 
-    public Call<ResponseBody> delAnnounce(String years) {
-        return mAnnounceApi.delAnnounce(years);
+    public Call<ResponseBody> delAnnounce(String id) {
+        return mAnnounceApi.delAnnounce(id);
     }
 
     public Call<ResponseBody> addStudent(String utype, String pwd, String stuAccount, String gender, String name, String system, String stuClass, String classNum, String stuCard, String credit) {
@@ -98,11 +101,43 @@ public class SystemApi {
         return mExtralScoreApi.submitExtral(stu_account, stuAward, matchDate, etGrade, extralScore);
     }
 
-    public Call<ResponseBody> editAnnounce() {
-        return mMessageApi.editAnnounce();
+    public Call<ResponseBody> editAnnounce(String stuAccount, String gender, String name, String mSystem, String mClass, String mClassNum, String stuCard, String credit) {
+        return mMessageApi.editAnnounce(stuAccount, gender, name, mSystem, mClass, mClassNum, stuCard, credit);
     }
 
-    public Call<ResponseBody> addStuScore() {
-        return mScoreApi.addStuScore();
+    public Call<ResponseBody> addStuScore(String json) {
+        return mScoreApi.addStuScore(json);
+    }
+
+    public Call<ResponseBody> getExtralScoreList(String page, String pageSize) {
+        return mExtralScoreApi.getExtralScoreList(page, pageSize);
+    }
+
+    public Call<ResponseBody> postExtalScore(String id, String extralscore) {
+        return mExtralScoreApi.postExtalScore(id, extralscore, "1");
+    }
+
+    public Call<ResponseBody> editScholarAnnounce(String id, String selectType, String content) {
+        return mAnnounceApi.editScholarAnnounce(id, selectType, content);
+    }
+
+    public Call<ResponseBody> lookUpAnnounce(String contentKey) {
+        return mAnnounceApi.lookUpAnnounce(contentKey);
+    }
+
+    public Call<ResponseBody> lookUpMessage(String uaccount) {
+        return mMessageApi.lookUpMessage(uaccount);
+    }
+
+    public Call<ResponseBody> lookUpScore(String uaccount) {
+        return mScoreApi.lookUpScore(uaccount);
+    }
+
+    public Call<ResponseBody> getAwardsList() {
+        return mAwardsListApi.getAwardsList();
+    }
+
+    public Call<ResponseBody> addScholar(String json) {
+        return mScholarApi.addScholar(json);
     }
 }

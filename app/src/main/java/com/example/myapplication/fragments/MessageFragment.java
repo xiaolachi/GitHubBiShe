@@ -1,5 +1,6 @@
 package com.example.myapplication.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ import com.example.myapplication.adapters.MessageAdapter;
 import com.example.myapplication.api.SystemApi;
 import com.example.myapplication.base.BaseListFragment;
 import com.example.myapplication.constant.LibConfig;
+import com.example.myapplication.dialog.CommonDialog;
 import com.example.myapplication.model.StudentInfoBean;
 import com.example.myapplication.utils.UIutils;
 import com.google.gson.Gson;
@@ -55,6 +58,7 @@ public class MessageFragment extends BaseListFragment {
     private ArrayList<StudentInfoBean> mData = new ArrayList();
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSRefresh;
+    private CommonDialog mLookUpAnnounceDialog;
 
     @Override
     protected View getLayoutView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,6 +74,31 @@ public class MessageFragment extends BaseListFragment {
         titleTv.setText(R.string.message);
         Button btnTrigger = mView.findViewById(R.id.btn_trigger);
         btnTrigger.setVisibility(View.VISIBLE);
+        Button btnLookup = mView.findViewById(R.id.btn_lookup);
+        btnLookup.setVisibility(View.VISIBLE);
+        btnLookup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //查询
+                mLookUpAnnounceDialog = new CommonDialog.Builder(getContext())
+                        .setTitle("查询公告")
+                        .setContentView(View.inflate(getContext(), R.layout.dialog_message_look, null))
+                        .setPositiveButton("查询", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                lookUpMessage();
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        }).create();
+                mLookUpAnnounceDialog.show();
+            }
+        });
         btnTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,6 +108,44 @@ public class MessageFragment extends BaseListFragment {
             }
         });
         mIsCreateView = true;
+    }
+
+    private void lookUpMessage() {
+        mData.clear();
+        mAdapter.notifyDataSetChanged();
+        addLoading();
+        EditText uaccount = mLookUpAnnounceDialog.findViewById(R.id.et_message_look_up);
+        new SystemApi(getContext()).lookUpMessage(uaccount.getText().toString()).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                            JSONObject data = (JSONObject) jsonObject.opt("data");
+                            StudentInfoBean bean = new Gson().fromJson(data.toString(), new TypeToken<StudentInfoBean>() {
+                            }.getType());
+                            if (bean != null) {
+                                mData.add(bean);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i(TAG + "-----", "onResponse");
+                    }
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+                removeLoading();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG + "-----", "onFailure：" + t);
+                removeLoading();
+            }
+        });
     }
 
     @Override
@@ -100,7 +167,7 @@ public class MessageFragment extends BaseListFragment {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("studetail", bean);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
         mRecyclerView.setAdapter(mAdapter);
@@ -204,53 +271,38 @@ public class MessageFragment extends BaseListFragment {
 
     private void getMessageList() {
         addLoading();
-//        mRecyclerView.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i = mCurrentPage - 1; i < mPageSize; i++) {
-//                    mData.add("刘一峰 " + (i+1));
-//                }
-//                mCurrentPage++;
-//         removeLoading();
-////            }
-////        }, 2000);
-        mRecyclerView.postDelayed(new Runnable() {
+        new SystemApi(getContext()).getMessageList(String.valueOf(mCurrentPage), String.valueOf(mPageSize)).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void run() {
-                new SystemApi(getContext()).getMessageList(String.valueOf(mCurrentPage), String.valueOf(mPageSize)).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (null != response.body()) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                int code = jsonObject.optInt("code");
-                                if (code == LibConfig.SUCCESS_CODE) {
-                                    JSONArray data = jsonObject.optJSONArray("data");
-                                    ArrayList<StudentInfoBean> beans = new Gson().fromJson(data.toString(), new TypeToken<List<StudentInfoBean>>() {
-                                    }.getType());
-                                    if (beans != null && beans.size() > 0) {
-                                        Collections.reverse(beans);
-                                        mData.addAll(beans);
-                                        mCurrentPage++;
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Log.i(TAG +"-----", "onResponse");
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                            JSONArray data = jsonObject.optJSONArray("data");
+                            ArrayList<StudentInfoBean> beans = new Gson().fromJson(data.toString(), new TypeToken<List<StudentInfoBean>>() {
+                            }.getType());
+                            if (beans != null && beans.size() > 0) {
+                                mData.addAll(beans);
+                                Collections.reverse(mData);
+                                mCurrentPage++;
                             }
-                        } else {
-                            UIutils.instance().toast("没有任何数据");
                         }
-                        removeLoading();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i(TAG + "-----", "onResponse");
                     }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG +"-----", "onFailure：" + t);
-                        removeLoading();
-                    }
-                });
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+                removeLoading();
             }
-        }, 0);
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG + "-----", "onFailure：" + t);
+                removeLoading();
+            }
+        });
     }
 }

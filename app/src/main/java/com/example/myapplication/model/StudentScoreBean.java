@@ -68,7 +68,11 @@ public class StudentScoreBean implements Parcelable {
         private String stu_system;
         private String total_score;
 
-        protected ScorelistBean(Parcel in) {
+        public ScorelistBean() {
+
+        }
+
+        private ScorelistBean(Parcel in) {
             average_credit = in.readString();
             average_score = in.readString();
             class_number = in.readString();

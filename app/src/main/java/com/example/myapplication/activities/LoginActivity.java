@@ -20,6 +20,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.api.LoginApi;
 import com.example.myapplication.api.SystemApi;
 import com.example.myapplication.constant.LibConfig;
+import com.example.myapplication.utils.LoginUtils;
 import com.example.myapplication.utils.SPUtils;
 import com.example.myapplication.utils.UIutils;
 
@@ -47,10 +48,18 @@ public class LoginActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        if (!TextUtils.isEmpty(LoginUtils.getLoginType())) {
+            finish();
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
         mSpinner = findViewById(R.id.spinner);
         mLoginTv = findViewById(R.id.tv_login);
         mUserNameEt = findViewById(R.id.et_mobile_number);
         mPassWordEt = findViewById(R.id.et_password);
+
         changeSpinner();
         mLoginTv.setOnClickListener(new View.OnClickListener() {
             @Override

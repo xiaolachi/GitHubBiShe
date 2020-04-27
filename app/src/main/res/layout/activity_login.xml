@@ -50,16 +50,20 @@
         app:layout_constraintTop_toBottomOf="@+id/layout_toolbar"
         app:layout_constraintVertical_bias="0.233">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_login_logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_above="@+id/name_rl"
             android:layout_marginTop="15dp"
-            android:background="@drawable/ic_score_blue_24dp"
-            android:contentDescription="@string/todo"
+            android:layout_marginBottom="20dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_width="2dp"
+            app:civ_border_color="#FF000000"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
 
         <View

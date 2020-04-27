@@ -72,10 +72,10 @@ public class AnnouncementAdapter extends BaseListAdapter {
             itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if (mData.size() <= 0 || LibConfig.LOGIN_TYPE_STUDENT.equals(LoginUtils.getLoginType()) || LibConfig.LOGIN_TYPE_TEACHER.equals(LoginUtils.getLoginType())) {
+                    if (mData == null || LibConfig.LOGIN_TYPE_STUDENT.equals(LoginUtils.getLoginType()) || LibConfig.LOGIN_TYPE_TEACHER.equals(LoginUtils.getLoginType())) {
                         return false;
                     }
-                    delAnnounce(mData.get(position).getYears());
+                    delAnnounce(mData.get(position).getId());
                     return true;
                 }
             });
@@ -90,8 +90,8 @@ public class AnnouncementAdapter extends BaseListAdapter {
         }
     }
 
-    private void delAnnounce(String years) {
-        new SystemApi(MyApplication.getApp().getApplicationContext()).delAnnounce(years).enqueue(new Callback<ResponseBody>() {
+    private void delAnnounce(String id) {
+        new SystemApi(MyApplication.getApp().getApplicationContext()).delAnnounce(id).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (null != response.body()) {

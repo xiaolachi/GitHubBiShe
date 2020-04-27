@@ -19,12 +19,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
 import com.example.myapplication.activities.MainActivity;
+import com.example.myapplication.activities.MimeDetalInfoActivity;
 import com.example.myapplication.activities.StuSubmitActivity;
 import com.example.myapplication.api.SystemApi;
 import com.example.myapplication.constant.LibConfig;
 import com.example.myapplication.dialog.CommonDialog;
 import com.example.myapplication.model.LoginBean;
 import com.example.myapplication.model.LoginStuBean;
+import com.example.myapplication.model.MineInfoBean;
 import com.example.myapplication.model.StudentInfoBean;
 import com.example.myapplication.utils.LoginUtils;
 import com.example.myapplication.utils.SPUtils;
@@ -56,7 +58,11 @@ public class MeFragment extends Fragment {
     private TextView mBtnSignOut;
     private TextView mUpdatePassTv;
     private TextView mStuSubmitTv;
+    private TextView mBtnSelfInfo;
     private CommonDialog mCommonDialog;
+
+    private LoginBean loginBean = null;
+    private LoginStuBean studentInfoBean = null;
 
     @Nullable
     @Override
@@ -70,9 +76,7 @@ public class MeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         bindViews();
         String type = LoginUtils.getLoginType();
-        LoginBean loginBean = null;
-        LoginStuBean studentInfoBean = null;
-        if (LoginUtils.getLoginType() == LibConfig.LOGIN_TYPE_STUDENT) {
+        if (LibConfig.LOGIN_TYPE_STUDENT.equals(LoginUtils.getLoginType())) {
             studentInfoBean = LoginUtils.getLoginStuData();
         } else {
             loginBean = LoginUtils.getLoginOTData();
@@ -84,6 +88,19 @@ public class MeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 LoginUtils.toLoginActivity((MainActivity)getActivity());
+            }
+        });
+
+        mBtnSelfInfo = mView.findViewById(R.id.btn_self_info);
+        mBtnSelfInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MimeDetalInfoActivity.class);
+                Bundle bundle = new Bundle();
+                MineInfoBean mineInfoBean = new MineInfoBean(loginBean, studentInfoBean);
+                bundle.putParcelable("bean_info", mineInfoBean);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -135,7 +152,6 @@ public class MeFragment extends Fragment {
                         })
                         .create();
                 mCommonDialog.show();
-                CommonDialog.setDialogWindowAttr(mCommonDialog, getContext());
             }
         });
 

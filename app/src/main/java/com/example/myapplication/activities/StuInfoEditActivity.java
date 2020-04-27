@@ -1,6 +1,7 @@
 package com.example.myapplication.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -89,6 +90,9 @@ public class StuInfoEditActivity extends Activity {
         mSubmit_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mBean != null) {
+                    mEt_password.setText("123");
+                }
                 String stuAccount = mEt_stu_account.getText().toString();
                 String gender = mEt_gender.getText().toString();
                 String name = mEt_name.getText().toString();
@@ -97,29 +101,59 @@ public class StuInfoEditActivity extends Activity {
                 String password = mEt_password.getText().toString();
                 if (TextUtils.isEmpty(stuAccount)) {
                     UIutils.instance().toast("请输入学生号");
+                    return;
                 } else if (TextUtils.isEmpty(password)) {
                     UIutils.instance().toast("请输入密码");
+                    return;
                 } else if (TextUtils.isEmpty(gender)) {
                     UIutils.instance().toast("请输入性别");
+                    return;
                 } else if (TextUtils.isEmpty(name)) {
                     UIutils.instance().toast("请输入学生姓名");
+                    return;
                 } else if (TextUtils.isEmpty(stuCard)) {
                     UIutils.instance().toast("请输入学生卡号");
+                    return;
                 } else if (TextUtils.isEmpty(credit)) {
                     UIutils.instance().toast("请输入学分");
+                    return;
                 } else {
                     if (mBean == null) {
                         addStudent(password, stuAccount, gender, name, mSystem, mClass, mClassNum, stuCard, credit);
                     } else {
-                        editAnnounce();
+                        editAnnounce(stuAccount, gender, name, mSystem, mClass, mClassNum, stuCard, credit);
                     }
                 }
             }
         });
     }
 
-    private void editAnnounce() {
-        new SystemApi(this).editAnnounce();
+    private void editAnnounce(String stuAccount, String gender, String name, String mSystem, String mClass, String mClassNum, String stuCard, String credit) {
+        new SystemApi(this).editAnnounce(stuAccount, gender, name, mSystem, mClass, mClassNum, stuCard, credit).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                            UIutils.instance().toast("添加成功");
+                            setResult(2);
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     private void getSystemClass() {
@@ -169,7 +203,7 @@ public class StuInfoEditActivity extends Activity {
             }
         });
         //classnum
-        mClassNumList = remindOnly(beans, "class");
+        mClassNumList = remindOnly(beans, "classnum");
         new SpinnerUtil().changeSpinner(this, mSpinnerClassNum, mClassNumList, new SpinnerUtil.CallBack() {
             @Override
             public void onItemSelected(TextView view) {

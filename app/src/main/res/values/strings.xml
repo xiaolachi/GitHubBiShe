@@ -12,4 +12,6 @@
     <string name="score">成绩</string>
     <string name="mine">我的</string>
     <string name="dialog_edit_content">请输入公告内容</string>
+    <string name="extralscore">附加</string>
+    <string name="award">奖学</string>
 </resources>

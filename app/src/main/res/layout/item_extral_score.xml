@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="10dp"
+    app:cardCornerRadius="5dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/title_include"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <Button
+                android:id="@+id/btn_borrow"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_toLeftOf="@+id/btn_look"
+                android:background="@android:color/transparent"
+                android:gravity="end|center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="5dp"
+                android:text="借阅"
+                android:visibility="invisible"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_look"
+                android:layout_width="60dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:background="@android:color/transparent"
+                android:paddingLeft="5dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp"
+                android:text="审阅"
+                android:visibility="visible"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/page_index"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:text="1" />
+
+            <LinearLayout
+                android:id="@+id/index"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btn_borrow"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:text="学生ID:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_stu_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/book_namw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/index"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:text="学生学号:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_stu_account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="16405416" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/book_namw"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:text="学生姓名:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_stu_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="刘一峰" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/enter_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/author"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:text="奖项名称:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_awards_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="校园歌手大赛" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/enter_name"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:text="获奖等级:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_awards_grade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="一等奖" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/press"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/price"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:text="比赛时间:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_match_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2020-30-40" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/operator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/press"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:text="附加分:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_extral_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/creadit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/operator"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginBottom="3dp"
+                    android:text="是否审核:"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_is_look"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="否" />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>

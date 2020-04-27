@@ -2,8 +2,8 @@ package com.example.myapplication.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -70,6 +69,7 @@ public class AnnouncementFragment extends BaseListFragment {
     private Spinner mSpinner;
     private String mSelectType;
     private List<String> mSelects = new ArrayList<>();
+    private CommonDialog mLookUpAnnounceDialog;
 
     @Override
     protected View getLayoutView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,7 +95,7 @@ public class AnnouncementFragment extends BaseListFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void  onEvent(RefreshEvent event) {
+    public void onEvent(RefreshEvent event) {
         if (getUserVisibleHint()) {
             refresh();
         }
@@ -108,19 +108,95 @@ public class AnnouncementFragment extends BaseListFragment {
         TextView titleTv = mView.findViewById(R.id.toolbar_title);
         titleTv.setText(R.string.announce);
         Button btnTrigger = mView.findViewById(R.id.btn_trigger);
+        Button btnLookup = mView.findViewById(R.id.btn_lookup);
+        btnLookup.setVisibility(View.VISIBLE);
         if (LibConfig.LOGIN_TYPE_OFFICE.equals(LoginUtils.getLoginType())) {
             btnTrigger.setVisibility(View.VISIBLE);
         }
         btnTrigger.setOnClickListener(new View.OnClickListener() {
-
-            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
                 //增加
-                commonDialog("添加公告", "add", null);
+                CommonDialog commonDialog = new CommonDialog.Builder(getContext())
+                        .setTitle("选择公告类型")
+                        .setNegativeButton("普通公告", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                commonDialog("添加公告", "common", null);
+                                dialogInterface.dismiss();
+                            }
+                        }).setPositiveButton("奖学金公告", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                commonDialog("添加公告", "add", null);
+                            }
+                        }).create();
+                commonDialog.show();
+                commonDialog.setCanceledOnTouchOutside(true);
+            }
+        });
+        btnLookup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLookUpAnnounceDialog = new CommonDialog.Builder(getContext())
+                        .setTitle("查询公告")
+                        .setContentView(View.inflate(getContext(), R.layout.dialog_announc_look, null))
+                        .setPositiveButton("查询", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                lookUpAnnounce();
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        }).create();
+                mLookUpAnnounceDialog.show();
             }
         });
         mIsCreateView = true;
+    }
+
+    private void lookUpAnnounce() {
+        mData.clear();
+        mAdapter.notifyDataSetChanged();
+        addLoading();
+        EditText contentKey = mLookUpAnnounceDialog.findViewById(R.id.et_announce_look_up);
+        new SystemApi(getContext()).lookUpAnnounce(contentKey.getText().toString()).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                            JSONArray data = jsonObject.optJSONArray("data");
+                            List<AnnounceBean> beans = new Gson().fromJson(data.toString(), new TypeToken<List<AnnounceBean>>() {
+                            }.getType());
+                            if (beans != null && beans.size() > 0) {
+                                mData.addAll(beans);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i(TAG + "-----", "onResponse");
+                    }
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+                removeLoading();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG + "-----", "onFailure：" + t);
+                removeLoading();
+            }
+        });
     }
 
     private void commonDialog(String title, String type, AnnounceBean bean) {
@@ -139,7 +215,13 @@ public class AnnouncementFragment extends BaseListFragment {
                         if ("add".equals(type)) {
                             addAnnounce();
                         } else if ("edit".equals(type)) {
-                            editAnnounce();
+                            editAnnounce(bean.getId());
+                        } else if ("common".equals(type)) {
+                            mSelectType = "";
+                            addAnnounce();
+                        } else if ("commonedit".equals(type)) {
+                            mSelectType = "";
+                            editAnnounce(bean.getId());
                         }
                         dialogInterface.dismiss();
                     }
@@ -147,15 +229,49 @@ public class AnnouncementFragment extends BaseListFragment {
                 .create();
         mCommonDialog.show();
         changeSpinner();
+        if ("common".equals(type) || "commonedit".equals(type)) {
+            mSpinner.setVisibility(View.GONE);
+        } else {
+            mSpinner.setVisibility(View.VISIBLE);
+        }
         if (bean != null) {
             EditText contentET = mCommonDialog.findViewById(R.id.dialog_edit_content);
             contentET.setText(bean.getContent());
             mSpinner.setSelection(mSelects.indexOf(bean.getYears()));
         }
-        CommonDialog.setDialogWindowAttr(mCommonDialog, getContext());
     }
 
-    private void editAnnounce() {
+    private void editAnnounce(String id) {
+        //编辑
+        EditText contentET = mCommonDialog.findViewById(R.id.dialog_edit_content);
+        new SystemApi(getContext()).editScholarAnnounce(id, mSelectType, contentET.getText().toString()).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        String msg = jsonObject.optString("msg");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                            UIutils.instance().toast("编辑成功");
+                            refresh();
+                        } else {
+                            UIutils.instance().toast(msg);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i(TAG + "-----", "onResponse");
+                    }
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     public void changeSpinner() {
@@ -226,9 +342,9 @@ public class AnnouncementFragment extends BaseListFragment {
                         int code = jsonObject.optInt("code");
                         String msg = jsonObject.optString("msg");
                         if (code == LibConfig.SUCCESS_CODE) {
-                           UIutils.instance().toast("添加成功");
-                           refresh();
-                        }else {
+                            UIutils.instance().toast("添加成功");
+                            refresh();
+                        } else {
                             UIutils.instance().toast(msg);
                         }
                     } catch (Exception e) {
@@ -257,12 +373,18 @@ public class AnnouncementFragment extends BaseListFragment {
             public void onItemClick(View view, AnnounceBean bean) {
                 if (view.getId() == R.id.announce_btn) {
                     //点击编辑公告
-                    commonDialog("修改公告", "edit", bean);
+                    if (!TextUtils.isEmpty(bean.getYears())) {
+                        commonDialog("修改公告", "edit", bean);
+                    } else {
+                        commonDialog("修改公告", "commonedit", bean);
+                    }
                 } else {
                     //点击进入公告详情页
-                    Intent intent = new Intent(getContext(), ScoreDetailActivity.class);
-                    intent.putExtra("years", bean.getYears());
-                    startActivity(intent);
+                    if (!TextUtils.isEmpty(bean.getYears())) {
+                        Intent intent = new Intent(getContext(), ScoreDetailActivity.class);
+                        intent.putExtra("years", bean.getYears());
+                        startActivity(intent);
+                    }
                 }
             }
         });

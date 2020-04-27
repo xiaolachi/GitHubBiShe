@@ -3,20 +3,18 @@ package com.example.myapplication.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.example.myapplication.R;
-import com.example.myapplication.utils.Dp2px;
 
 public class CommonDialog extends Dialog {
+
+    private Context mContext;
 
     public CommonDialog(@NonNull Context context) {
         super(context);
@@ -24,19 +22,20 @@ public class CommonDialog extends Dialog {
 
     public CommonDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
+        this.mContext = context;
         setCanceledOnTouchOutside(false);
     }
 
     //在dialog.show()之后调用
-    public static void setDialogWindowAttr(Dialog dlg, Context ctx){
-        Window window = dlg.getWindow();
-        WindowManager.LayoutParams lp = window.getAttributes();
-        lp.gravity = Gravity.CENTER;
-        lp.horizontalMargin = Dp2px.dp2px(dlg.getContext(), 12);
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;//宽高可设置具体大小
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        dlg.getWindow().setAttributes(lp);
-    }
+//    public static void setDialogWindowAttr(Dialog dlg){
+//        Window window = dlg.getWindow();
+//        WindowManager.LayoutParams lp = window.getAttributes();
+//        lp.gravity = Gravity.CENTER;
+//        lp.horizontalMargin = Dp2px.dp2px(dlg.getContext(), 12);
+//        lp.width = WindowManager.LayoutParams.MATCH_PARENT;//宽高可设置具体大小
+//        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//        dlg.getWindow().setAttributes(lp);
+//    }
 
     public static class Builder {
         private Context context;

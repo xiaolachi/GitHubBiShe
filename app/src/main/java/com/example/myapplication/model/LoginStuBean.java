@@ -1,6 +1,9 @@
 package com.example.myapplication.model;
 
-public class LoginStuBean {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class LoginStuBean implements Parcelable {
 
 
     /**
@@ -28,6 +31,32 @@ public class LoginStuBean {
     private String Stu_Card;
     private String Stu_class;
     private String Stu_sex;
+
+    protected LoginStuBean(Parcel in) {
+        Stu_number = in.readString();
+        password = in.readString();
+        name = in.readString();
+        id = in.readInt();
+        Class_number = in.readString();
+        Stu_accout = in.readString();
+        Stu_system = in.readString();
+        Stu_ID = in.readString();
+        Stu_Card = in.readString();
+        Stu_class = in.readString();
+        Stu_sex = in.readString();
+    }
+
+    public static final Creator<LoginStuBean> CREATOR = new Creator<LoginStuBean>() {
+        @Override
+        public LoginStuBean createFromParcel(Parcel in) {
+            return new LoginStuBean(in);
+        }
+
+        @Override
+        public LoginStuBean[] newArray(int size) {
+            return new LoginStuBean[size];
+        }
+    };
 
     public String getStu_number() {
         return Stu_number;
@@ -115,5 +144,42 @@ public class LoginStuBean {
 
     public void setStu_sex(String Stu_sex) {
         this.Stu_sex = Stu_sex;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(Stu_number);
+        parcel.writeString(password);
+        parcel.writeString(name);
+        parcel.writeInt(id);
+        parcel.writeString(Class_number);
+        parcel.writeString(Stu_accout);
+        parcel.writeString(Stu_system);
+        parcel.writeString(Stu_ID);
+        parcel.writeString(Stu_Card);
+        parcel.writeString(Stu_class);
+        parcel.writeString(Stu_sex);
+    }
+
+    @Override
+    public String toString() {
+        return "LoginStuBean{" +
+                "Stu_number='" + Stu_number + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", id=" + id +
+                ", Class_number='" + Class_number + '\'' +
+                ", Stu_accout='" + Stu_accout + '\'' +
+                ", Stu_system='" + Stu_system + '\'' +
+                ", Stu_ID='" + Stu_ID + '\'' +
+                ", Stu_Card='" + Stu_Card + '\'' +
+                ", Stu_class='" + Stu_class + '\'' +
+                ", Stu_sex='" + Stu_sex + '\'' +
+                '}';
     }
 }

@@ -60,9 +60,18 @@ public class StudentDetailActivity extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("bean", bean);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == 2) {
+            setResult(2);
+            finish();
+        }
     }
 
     private void bindViews() {

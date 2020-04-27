@@ -1,21 +1,27 @@
-<RelativeLayout android:layout_width="match_parent"
+<RelativeLayout
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/h_back"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@android:color/holo_blue_dark" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/haha" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/h_head"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:layout_above="@+id/name_rl"
         android:layout_marginBottom="20dp"
         android:layout_marginStart="149dp"
-        android:src="@android:color/holo_purple" />
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher"
+        app:civ_border_width="2dp"
+        app:civ_border_color="#FF000000"/>
 
     <RelativeLayout
         android:id="@+id/name_rl"
@@ -64,7 +70,7 @@
             android:id="@+id/stu_submit_tv"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@android:color/holo_purple"
+            android:background="@android:color/holo_orange_light"
             android:gravity="center"
             android:textColor="@android:color/white"
             android:text="学生申报"
@@ -75,10 +81,21 @@
             android:id="@+id/update_pass_tv"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:background="@android:color/holo_purple"
+            android:background="@android:color/holo_orange_light"
             android:gravity="center"
             android:textColor="@android:color/white"
             android:text="修改密码"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+
+        <TextView
+            android:id="@+id/btn_self_info"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@android:color/holo_orange_light"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="查看个人信息"
             android:textSize="18sp"
             android:layout_marginTop="15dp"/>
 

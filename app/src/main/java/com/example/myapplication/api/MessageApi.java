@@ -19,6 +19,17 @@ public interface MessageApi {
     @GET("BiSheServer/main?action=deluser")
     Call<ResponseBody> delStudent(@Query("utype") String utype, @Query("id") int id);
 
-    @GET("")
-    Call<ResponseBody> editAnnounce();
+    @GET("BiSheServer/main?action=updatestuinfo")
+    Call<ResponseBody> editAnnounce
+            (@Query("stuaccount") String stuAccount,
+             @Query("stusex") String gender,
+             @Query("name") String name,
+             @Query("stusystem") String system,
+             @Query("stuclass") String stuClass,
+             @Query("classnumber") String classNum,
+             @Query("stuidcard") String stuCard,
+             @Query("stuscore") String credit);
+
+    @GET("BiSheServer/main?action=selectastu")
+    Call<ResponseBody> lookUpMessage(@Query("uaccount") String uaccount);
 }

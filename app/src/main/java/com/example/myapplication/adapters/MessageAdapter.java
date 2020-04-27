@@ -46,21 +46,21 @@ public class MessageAdapter extends BaseListAdapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if (mData != null && mData.size() > 0 && holder instanceof ItemViewHolder) {
-           ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-           itemViewHolder.idTv.setText("" + (position+1));
-           itemViewHolder.nameTv.setText(mData.get(position).getName());
-           itemViewHolder.systemTv.setText(mData.get(position).getStu_system());
-           itemViewHolder.profressionTv.setText(mData.get(position).getStu_class());
-           itemViewHolder.classNumTv.setText(mData.get(position).getClass_number());
+            ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+            itemViewHolder.idTv.setText("" + (position + 1));
+            itemViewHolder.nameTv.setText(mData.get(position).getName());
+            itemViewHolder.systemTv.setText(mData.get(position).getStu_system());
+            itemViewHolder.profressionTv.setText(mData.get(position).getStu_class());
+            itemViewHolder.classNumTv.setText(mData.get(position).getClass_number());
 
-           itemViewHolder.lookDetailTv.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   if (mListener != null) {
-                       mListener.onItemClick(view, mData.get(position));
-                   }
-               }
-           });
+            itemViewHolder.lookDetailTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onItemClick(view, mData.get(position));
+                    }
+                }
+            });
 
             itemViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -78,17 +78,13 @@ public class MessageAdapter extends BaseListAdapter {
 
     @Override
     public int getItemCount() {
-        if (mData.isEmpty()) {
-            return 1;
-        } else{
-            return mData.size();
-        }
+        return mData.size();
     }
 
     @Override
     public int getItemViewType(int position) {
         if (mData != null && mData.size() > 0 && null == mData.get(position)) {
-           return VIEW_FOOTER;
+            return VIEW_FOOTER;
         } else {
             return super.getItemViewType(position);
         }
@@ -102,6 +98,7 @@ public class MessageAdapter extends BaseListAdapter {
         private TextView lookDetailTv;
         private TextView idTv;
         private View itemView;
+
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             this.itemView = itemView;

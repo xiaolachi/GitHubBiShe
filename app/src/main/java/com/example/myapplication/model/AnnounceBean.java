@@ -4,9 +4,18 @@ import java.util.List;
 
 public class AnnounceBean {
 
+    private String id;
     private String content;
     private String publis_time;
     private String years;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getYears() {
         return years;

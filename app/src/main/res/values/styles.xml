@@ -8,9 +8,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+<!--     Window window = dlg.getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.gravity = Gravity.CENTER;
+        lp.horizontalMargin = Dp2px.dp2px(dlg.getContext(), 12);
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;//宽高可设置具体大小
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dlg.getWindow().setAttributes(lp);-->
     <style name="Dialog" parent="android:style/Theme.Dialog">
-        <item name="android:background">#ffffff</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@drawable/shape_rectangle_white_corner_12dp</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
     </style>
 </resources>

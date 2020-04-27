@@ -19,5 +19,11 @@ public interface AnnounceApi {
     Call<ResponseBody> addAnnounce(@Query("content") String content, @Query("years") String years);
 
     @GET("BiSheServer/main?action=delScholarAnnounce")
-    Call<ResponseBody> delAnnounce(@Query("years") String years);
+    Call<ResponseBody> delAnnounce(@Query("id") String id);
+
+    @GET("BiSheServer/main?action=editScholarAnnounce")
+    Call<ResponseBody> editScholarAnnounce(@Query("id") String id, @Query("years") String selectType, @Query("content") String content);
+
+    @GET("BiSheServer/main?action=selectAnnounceByCondition")
+    Call<ResponseBody> lookUpAnnounce(@Query("condition") String contentKey);
 }
