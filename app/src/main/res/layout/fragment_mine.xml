@@ -100,6 +100,17 @@
             android:layout_marginTop="15dp"/>
 
         <TextView
+            android:id="@+id/btn_self_score"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@android:color/holo_orange_light"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="查看个人成绩"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+
+        <TextView
             android:id="@+id/btn_sign_out"
             android:layout_width="match_parent"
             android:layout_height="35dp"

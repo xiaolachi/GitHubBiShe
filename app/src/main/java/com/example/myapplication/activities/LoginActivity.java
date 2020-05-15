@@ -80,6 +80,7 @@ public class LoginActivity extends Activity {
         });
     }
 
+
     private void login(String userName, String passWord) {
         RequestBody body = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -97,6 +98,7 @@ public class LoginActivity extends Activity {
                         if (code == LibConfig.SUCCESS_CODE) {
                             UIutils.instance().toast("登录成功");
                             //将 utype  存起来， 后面各个界面  通过他去控制  退出时要清除
+                            //Sharepreferens
                             SPUtils.getInstance().put(LibConfig.LOGIN_U_TYPE, mSelectType);
                             SPUtils.getInstance().put(LibConfig.LOGIN_U_DATA,  jsonObject.opt("data").toString());
                             finish();
@@ -129,6 +131,7 @@ public class LoginActivity extends Activity {
                 R.layout.item_select, spinnerItems);
         //自定义下拉的字体样式
         spinnerAdapter.setDropDownViewResource(R.layout.item_drop);
+
         mSpinner.setAdapter(spinnerAdapter);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

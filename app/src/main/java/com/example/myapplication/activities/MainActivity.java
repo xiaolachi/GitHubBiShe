@@ -71,7 +71,40 @@ public class MainActivity extends AppCompatActivity {
                     add(mMeFragment);
                 }
             };
-        } else if (type.equals(LibConfig.LOGIN_TYPE_OFFICE) || type.equals(LibConfig.LOGIN_TYPE_TEACHER)) {
+        } else if (type.equals(LibConfig.LOGIN_TYPE_OFFICE)) {
+            mIconResID = new int[3];
+            mIconText = new String[3];
+            mIconResID[0] = R.drawable.icon_tab_announce;
+//            mIconResID[1] = R.drawable.icon_tab_message;
+//            mIconResID[2] = R.drawable.icon_tab_extral;
+//            mIconResID[3] = R.drawable.icon_tab_score;
+            mIconResID[1] = R.drawable.icon_tab_awards;
+            mIconResID[2] = R.drawable.icon_tab_mine;
+
+            mIconText[0] = getString(R.string.announce);
+//            mIconText[1] = getString(R.string.message);
+//            mIconText[2] = getString(R.string.extralscore);
+//            mIconText[3] = getString(R.string.score);
+            mIconText[1] = getString(R.string.award);
+            mIconText[2] = getString(R.string.mine);
+            mAnnouncementFragment = new AnnouncementFragment();
+//            mMessageFragment = new MessageFragment();
+//            mExtralScoreFragment = new ExtralScoreFragment();
+//            mScoreFragment = new ScoreFragment();
+            mAwardsListFragment = new AwardsListFragment();
+            mMeFragment = new MeFragment();
+
+            mFragmentList = new ArrayList<Fragment>() {
+                {
+                    add(mAnnouncementFragment);
+//                    add(mMessageFragment);
+//                    add(mExtralScoreFragment);
+//                    add(mScoreFragment);
+                    add(mAwardsListFragment);
+                    add(mMeFragment);
+                }
+            };
+        } else if(type.equals(LibConfig.LOGIN_TYPE_TEACHER)) {
             mIconResID = new int[6];
             mIconText = new String[6];
             mIconResID[0] = R.drawable.icon_tab_announce;

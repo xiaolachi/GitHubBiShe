@@ -10,6 +10,7 @@ import retrofit2.http.Query;
 
 public interface LoginApi {
 
+    //http://192.168.0.105:8080/BiSheServer/main?action=login
     @POST("BiSheServer/main?action=login")
     Call<ResponseBody> login(@Body RequestBody body);
 

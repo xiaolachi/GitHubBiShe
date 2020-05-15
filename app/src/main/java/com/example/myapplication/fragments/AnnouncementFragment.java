@@ -73,7 +73,9 @@ public class AnnouncementFragment extends BaseListFragment {
 
     @Override
     protected View getLayoutView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //加载的视图
         mView = inflater.inflate(R.layout.fragment_announcement, container, false);
+        //配置滑动列表以及它的适配器
         setUpView();
         return mView;
     }
@@ -81,6 +83,7 @@ public class AnnouncementFragment extends BaseListFragment {
     @Override
     public void onStart() {
         super.onStart();
+        //注册EventBus
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -89,6 +92,7 @@ public class AnnouncementFragment extends BaseListFragment {
     @Override
     public void onStop() {
         super.onStop();
+        //注销EventBus
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
         }
@@ -104,19 +108,24 @@ public class AnnouncementFragment extends BaseListFragment {
     @Override
     public void initTitle() {
         super.initTitle();
+        //打开添加奖学金公告时下拉列表中的数据
         getAnnonYears();
+        //title
         TextView titleTv = mView.findViewById(R.id.toolbar_title);
         titleTv.setText(R.string.announce);
+        //添加
         Button btnTrigger = mView.findViewById(R.id.btn_trigger);
+        //查询
         Button btnLookup = mView.findViewById(R.id.btn_lookup);
         btnLookup.setVisibility(View.VISIBLE);
         if (LibConfig.LOGIN_TYPE_OFFICE.equals(LoginUtils.getLoginType())) {
             btnTrigger.setVisibility(View.VISIBLE);
         }
+        //添加的点击事件
         btnTrigger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //增加
+                //添加
                 CommonDialog commonDialog = new CommonDialog.Builder(getContext())
                         .setTitle("选择公告类型")
                         .setNegativeButton("普通公告", new DialogInterface.OnClickListener() {
@@ -136,6 +145,7 @@ public class AnnouncementFragment extends BaseListFragment {
                 commonDialog.setCanceledOnTouchOutside(true);
             }
         });
+        //查询的点击事件
         btnLookup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,6 +209,12 @@ public class AnnouncementFragment extends BaseListFragment {
         });
     }
 
+    /**
+     * 添加 普通公告 或者奖学金公告的弹框
+     * @param title  标题
+     * @param type   公告的类型  普通 ｜ 奖学金   -> 编辑 ｜ 添加
+     * @param bean   公告的数据，  当你点击的是编辑， 携带的数据， 显示在弹框上
+     */
     private void commonDialog(String title, String type, AnnounceBean bean) {
         mCommonDialog = new CommonDialog.Builder(getContext())
                 .setTitle(title)
@@ -213,13 +229,17 @@ public class AnnouncementFragment extends BaseListFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if ("add".equals(type)) {
+                            //添加奖学金公告
                             addAnnounce();
                         } else if ("edit".equals(type)) {
+                            //编辑奖学金公告
                             editAnnounce(bean.getId());
                         } else if ("common".equals(type)) {
+                            //添加一个普通公告
                             mSelectType = "";
                             addAnnounce();
                         } else if ("commonedit".equals(type)) {
+                            //编辑一个普通公告
                             mSelectType = "";
                             editAnnounce(bean.getId());
                         }
@@ -228,12 +248,15 @@ public class AnnouncementFragment extends BaseListFragment {
                 })
                 .create();
         mCommonDialog.show();
+        //配置奖学金弹框中  选择事件的下拉列表
         changeSpinner();
+        //隐藏下拉列表
         if ("common".equals(type) || "commonedit".equals(type)) {
             mSpinner.setVisibility(View.GONE);
         } else {
             mSpinner.setVisibility(View.VISIBLE);
         }
+        //如果是编辑操作，将携带来的数据显示在弹框中
         if (bean != null) {
             EditText contentET = mCommonDialog.findViewById(R.id.dialog_edit_content);
             contentET.setText(bean.getContent());
@@ -331,18 +354,35 @@ public class AnnouncementFragment extends BaseListFragment {
         });
     }
 
+    /*
+     * 添加公告
+     */
     private void addAnnounce() {
         EditText contentET = mCommonDialog.findViewById(R.id.dialog_edit_content);
-        new SystemApi(getContext()).addAnnounce(contentET.getText().toString(), mSelectType).enqueue(new Callback<ResponseBody>() {
+        //new SystemApi(getContext())  配置网络请求的引擎
+        //.addAnnounce(contentET.getText().toString(), mSelectType) 进行网络请求
+        //.enqueue  真正的将网络请求发送给服务器   并且这是一个异步请求
+        new SystemApi(getContext()).addAnnounce(contentET.getText().toString(), mSelectType).enqueue(
+                //new Callback<ResponseBody>() 相当于匿名方法， 也就是回调
+                new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                //请求成功
+                //判断请求成功后，服务器是否返回了数据
                 if (null != response.body()) {
                     try {
+                        //将你的请求体 转成一个json对象
                         JSONObject jsonObject = new JSONObject(response.body().string());
+                        //拿到你的请求码
                         int code = jsonObject.optInt("code");
+                        //拿到你的请求信息  添加成功，  添加失败
                         String msg = jsonObject.optString("msg");
-                        if (code == LibConfig.SUCCESS_CODE) {
+                        if (code == LibConfig.SUCCESS_CODE) {  //请求码正确
+
                             UIutils.instance().toast("添加成功");
+                            //刷新当前的 页面，，  添加  新添加的那一个放到了数据库的最后一行
+                            //但是我们拿的是数据库列表的前十五行，， 所有就看不见
+                            //你数据库有  15条  -> 16 -> 15  -> 1
                             refresh();
                         } else {
                             UIutils.instance().toast(msg);
@@ -358,7 +398,7 @@ public class AnnouncementFragment extends BaseListFragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+               //请求失败
             }
         });
 
@@ -430,6 +470,7 @@ public class AnnouncementFragment extends BaseListFragment {
         mCurrentPage = 1;
         mData.clear();
         mAdapter.notifyDataSetChanged();
+        //重新获取数据
         getAnnouncementList();
     }
 

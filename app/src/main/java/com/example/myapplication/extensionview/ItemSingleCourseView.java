@@ -50,10 +50,6 @@ public class ItemSingleCourseView extends LinearLayout {
         });
     }
 
-    public void delSingleView(int i) {
-
-    }
-
     public List<SubmitStuCourseScoreBean> getList(String stuAccount) {
         List<SubmitStuCourseScoreBean> listScore = new ArrayList<>();
         List<SubmitScholarBean> listAwards = new ArrayList<>();
