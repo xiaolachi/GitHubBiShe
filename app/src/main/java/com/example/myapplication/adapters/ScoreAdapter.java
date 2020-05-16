@@ -15,7 +15,7 @@ import com.example.myapplication.model.StudentScoreBean;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoreAdapter extends BaseListAdapter {
+public class  ScoreAdapter extends BaseListAdapter {
 
     private List<StudentScoreBean> mData;
     private OnItemClickListener mListener;

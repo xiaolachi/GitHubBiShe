@@ -140,4 +140,8 @@ public class SystemApi {
     public Call<ResponseBody> addScholar(String json) {
         return mScholarApi.addScholar(json);
     }
+
+    public Call<ResponseBody> getScoreGradeList() {
+        return mScoreApi.getScoreGradeList();
+    }
 }

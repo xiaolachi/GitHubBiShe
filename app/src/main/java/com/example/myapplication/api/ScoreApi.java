@@ -15,4 +15,7 @@ public interface ScoreApi {
 
     @GET("BiSheServer/main?action=selectscoreastu")
     Call<ResponseBody> lookUpScore(@Query("uaccount") String uaccount);
+
+    @GET("BiSheServer/main?action=selectThirdStuList")
+    Call<ResponseBody> getScoreGradeList();
 }

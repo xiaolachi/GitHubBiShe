@@ -211,9 +211,10 @@ public class AnnouncementFragment extends BaseListFragment {
 
     /**
      * 添加 普通公告 或者奖学金公告的弹框
-     * @param title  标题
-     * @param type   公告的类型  普通 ｜ 奖学金   -> 编辑 ｜ 添加
-     * @param bean   公告的数据，  当你点击的是编辑， 携带的数据， 显示在弹框上
+     *
+     * @param title 标题
+     * @param type  公告的类型  普通 ｜ 奖学金   -> 编辑 ｜ 添加
+     * @param bean  公告的数据，  当你点击的是编辑， 携带的数据， 显示在弹框上
      */
     private void commonDialog(String title, String type, AnnounceBean bean) {
         mCommonDialog = new CommonDialog.Builder(getContext())
@@ -365,42 +366,42 @@ public class AnnouncementFragment extends BaseListFragment {
         new SystemApi(getContext()).addAnnounce(contentET.getText().toString(), mSelectType).enqueue(
                 //new Callback<ResponseBody>() 相当于匿名方法， 也就是回调
                 new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                //请求成功
-                //判断请求成功后，服务器是否返回了数据
-                if (null != response.body()) {
-                    try {
-                        //将你的请求体 转成一个json对象
-                        JSONObject jsonObject = new JSONObject(response.body().string());
-                        //拿到你的请求码
-                        int code = jsonObject.optInt("code");
-                        //拿到你的请求信息  添加成功，  添加失败
-                        String msg = jsonObject.optString("msg");
-                        if (code == LibConfig.SUCCESS_CODE) {  //请求码正确
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        //请求成功
+                        //判断请求成功后，服务器是否返回了数据
+                        if (null != response.body()) {
+                            try {
+                                //将你的请求体 转成一个json对象
+                                JSONObject jsonObject = new JSONObject(response.body().string());
+                                //拿到你的请求码
+                                int code = jsonObject.optInt("code");
+                                //拿到你的请求信息  添加成功，  添加失败
+                                String msg = jsonObject.optString("msg");
+                                if (code == LibConfig.SUCCESS_CODE) {  //请求码正确
 
-                            UIutils.instance().toast("添加成功");
-                            //刷新当前的 页面，，  添加  新添加的那一个放到了数据库的最后一行
-                            //但是我们拿的是数据库列表的前十五行，， 所有就看不见
-                            //你数据库有  15条  -> 16 -> 15  -> 1
-                            refresh();
+                                    UIutils.instance().toast("添加成功");
+                                    //刷新当前的 页面，，  添加  新添加的那一个放到了数据库的最后一行
+                                    //但是我们拿的是数据库列表的前十五行，， 所有就看不见
+                                    //你数据库有  15条  -> 16 -> 15  -> 1
+                                    refresh();
+                                } else {
+                                    UIutils.instance().toast(msg);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.i(TAG + "-----", "onResponse");
+                            }
                         } else {
-                            UIutils.instance().toast(msg);
+                            UIutils.instance().toast("没有任何数据");
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.i(TAG + "-----", "onResponse");
                     }
-                } else {
-                    UIutils.instance().toast("没有任何数据");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-               //请求失败
-            }
-        });
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        //请求失败
+                    }
+                });
 
     }
 
@@ -500,42 +501,38 @@ public class AnnouncementFragment extends BaseListFragment {
 //            }
 //        }, 2000);
 
-        mRecyclerView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new SystemApi(getContext()).getAnnounceList(String.valueOf(mCurrentPage), String.valueOf(mPageSize)).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (null != response.body()) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response.body().string());
-                                int code = jsonObject.optInt("code");
-                                if (code == LibConfig.SUCCESS_CODE) {
-                                    JSONArray data = jsonObject.optJSONArray("data");
-                                    List<AnnounceBean> beans = new Gson().fromJson(data.toString(), new TypeToken<List<AnnounceBean>>() {
-                                    }.getType());
-                                    if (beans != null && beans.size() > 0) {
-                                        mData.addAll(beans);
-                                        mCurrentPage++;
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Log.i(TAG + "-----", "onResponse");
-                            }
-                        } else {
-                            UIutils.instance().toast("没有任何数据");
-                        }
-                        removeLoading();
-                    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG + "-----", "onFailure：" + t);
-                        removeLoading();
+        new SystemApi(getContext()).getAnnounceList(String.valueOf(mCurrentPage), String.valueOf(mPageSize)).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (null != response.body()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        int code = jsonObject.optInt("code");
+                        if (code == LibConfig.SUCCESS_CODE) {
+                            JSONArray data = jsonObject.optJSONArray("data");
+                            List<AnnounceBean> beans = new Gson().fromJson(data.toString(), new TypeToken<List<AnnounceBean>>() {
+                            }.getType());
+                            if (beans != null && beans.size() > 0) {
+                                mData.addAll(beans);
+                                mCurrentPage++;
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i(TAG + "-----", "onResponse");
                     }
-                });
+                } else {
+                    UIutils.instance().toast("没有任何数据");
+                }
+                removeLoading();
             }
-        }, 0);
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG + "-----", "onFailure：" + t);
+                removeLoading();
+            }
+        });
     }
 }

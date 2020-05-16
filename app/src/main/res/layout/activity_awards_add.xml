@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <include layout="@layout/title_view"/>
+
+    <LinearLayout
+        android:id="@+id/score_list_ly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+
+    </LinearLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"
